@@ -28,15 +28,27 @@ class _MyHomePageState extends State<MyHomePage> {
   String dersAdi;
   int dersKredi = 1;
   double dersHarfDegeri = 4;
+  List<Ders> tumDersler;
+  var formKey = GlobalKey<FormState>();
+  @override
+  void initState() {
+    // contracter
+    tumDersler = [];
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false, // klavye acılınca hatayı onler
       appBar: AppBar(
         title: Text("Benim Ortalamam"),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          if (formKey.currentState.validate()) {
+            formKey.currentState.save();
+          }
+        },
         child: Icon(Icons.add),
       ),
       body: buildBody(),
@@ -50,20 +62,20 @@ class _MyHomePageState extends State<MyHomePage> {
             CrossAxisAlignment.stretch, // yatayda butun alana yaıylır
         children: [
           // STATİC FORMU TUTAN CONTAİNER
-          Expanded(
-            child: Container(
-              padding: EdgeInsets.all(12),
-              color: Colors.pink.shade300,
-              child: Form(
-                child: buildFormColumn(),
-              ),
+          Container(
+            padding: EdgeInsets.all(12),
+            color: Colors.pink.shade300,
+            child: Form(
+              key: formKey,
+              child: buildFormColumn(),
             ),
           ),
           // DİNAMİK LİSTEYİ TUTAN CONTAİNER
           Expanded(
+            
             child: Container(
               color: Colors.blue.shade300,
-              child: Text("liste"),
+              child: buildList(),
             ),
           )
         ],
@@ -71,58 +83,67 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+// stattic form için
   Widget buildFormColumn() {
     return Column(
       children: [
-        buildTextFormField(),
+        TextFormField(
+          decoration: InputDecoration(
+            labelText: "Ders Adı",
+            hintText: "Ders Adını Giriniz",
+            border: OutlineInputBorder(),
+          ),
+          validator: (girilenDeger) {
+            if (girilenDeger.length > 0) {
+              return null;
+            } else {
+              return "Ders adı boş olamaz.";
+            }
+          },
+          onSaved: (kaydedilenDeger) {
+            dersAdi = kaydedilenDeger;
+            setState(() {
+              tumDersler.add(Ders(dersAdi, dersHarfDegeri, dersKredi));
+            });
+            
+          },
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               margin: EdgeInsets.only(top: 10),
               child: buildDropDownButton(),
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: Colors.black,width: 2,
+                  color: Colors.black,
+                  width: 2,
                 ),
                 borderRadius: BorderRadius.all(Radius.circular(10)),
               ),
-              ),
-              Container(
-              padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               margin: EdgeInsets.only(top: 10),
               child: buildDropDownButton2(),
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: Colors.black,width: 2,
+                  color: Colors.black,
+                  width: 2,
                 ),
                 borderRadius: BorderRadius.all(Radius.circular(10)),
               ),
-              ),
+            ),
           ],
         ),
+        Divider(
+          // çizgi
+          color: Colors.blue,
+          height: 40,
+          indent: 2,
+        ),
       ],
-    );
-  }
-
-  Widget buildTextFormField() {
-    return TextFormField(
-      decoration: InputDecoration(
-        labelText: "Ders Adı",
-        hintText: "Ders Adını Giriniz",
-        border: OutlineInputBorder(),
-      ),
-      validator: (girilenDeger) {
-        if (girilenDeger.length > 0) {
-          return null;
-        } else {
-          return "Ders adı boş olamaz.";
-        }
-      },
-      onSaved: (kaydedilenDeger) {
-        dersAdi = kaydedilenDeger;
-      },
     );
   }
 
@@ -141,14 +162,68 @@ class _MyHomePageState extends State<MyHomePage> {
   List<DropdownMenuItem<double>> dersHarfDegerleritems() {
     List<DropdownMenuItem<double>> harfler = [];
 
-    harfler.add(DropdownMenuItem(value: 4,child: Text("AA",style: TextStyle(fontSize: 20),),),);
-    harfler.add(DropdownMenuItem(value: 3.5,child: Text("BA",style: TextStyle(fontSize: 20),),),);
-    harfler.add(DropdownMenuItem(value: 3,child: Text("BB",style: TextStyle(fontSize: 20),),),);
-    harfler.add(DropdownMenuItem(value: 2.5,child: Text("CB",style: TextStyle(fontSize: 20),),));
-    harfler.add(DropdownMenuItem(value: 2,child: Text("CC",style: TextStyle(fontSize: 20),),));
-    harfler.add(DropdownMenuItem(value: 1.5,child: Text("DC",style: TextStyle(fontSize: 20),),));
-    harfler.add(DropdownMenuItem(value: 1,child: Text("DD",style: TextStyle(fontSize: 20),),));
-    harfler.add(DropdownMenuItem(value: 0,child: Text("FF",style: TextStyle(fontSize: 20),),));
+    harfler.add(
+      DropdownMenuItem(
+        value: 4,
+        child: Text(
+          "AA",
+          style: TextStyle(fontSize: 20),
+        ),
+      ),
+    );
+    harfler.add(
+      DropdownMenuItem(
+        value: 3.5,
+        child: Text(
+          "BA",
+          style: TextStyle(fontSize: 20),
+        ),
+      ),
+    );
+    harfler.add(
+      DropdownMenuItem(
+        value: 3,
+        child: Text(
+          "BB",
+          style: TextStyle(fontSize: 20),
+        ),
+      ),
+    );
+    harfler.add(DropdownMenuItem(
+      value: 2.5,
+      child: Text(
+        "CB",
+        style: TextStyle(fontSize: 20),
+      ),
+    ));
+    harfler.add(DropdownMenuItem(
+      value: 2,
+      child: Text(
+        "CC",
+        style: TextStyle(fontSize: 20),
+      ),
+    ));
+    harfler.add(DropdownMenuItem(
+      value: 1.5,
+      child: Text(
+        "DC",
+        style: TextStyle(fontSize: 20),
+      ),
+    ));
+    harfler.add(DropdownMenuItem(
+      value: 1,
+      child: Text(
+        "DD",
+        style: TextStyle(fontSize: 20),
+      ),
+    ));
+    harfler.add(DropdownMenuItem(
+      value: 0,
+      child: Text(
+        "FF",
+        style: TextStyle(fontSize: 20),
+      ),
+    ));
 
     return harfler;
   }
@@ -168,8 +243,40 @@ class _MyHomePageState extends State<MyHomePage> {
   List<DropdownMenuItem<int>> dersKredileriItems() {
     List<DropdownMenuItem<int>> krediler = [];
     for (int i = 1; i <= 10; i++) {
-      krediler.add(DropdownMenuItem<int>(value: i,child: Text("$i index",style: TextStyle(fontSize: 20),),));
+      krediler.add(DropdownMenuItem<int>(
+        value: i,
+        child: Text(
+          "$i index",
+          style: TextStyle(fontSize: 20),
+        ),
+      ));
     }
     return krediler;
   }
+
+  //dinamik liste için
+  Widget buildList() {
+    return ListView.builder(
+      itemBuilder: _listeElemenOlustur,
+      itemCount: tumDersler.length,
+    );
+  }
+
+  Widget _listeElemenOlustur(BuildContext context, int index) {
+    return Card(
+      child: ListTile(
+        title: Text(tumDersler[index].ad),
+        subtitle: Text(tumDersler[index].kredi.toString()+"kredi ders degeri"+tumDersler[index].harfDegeri.toString()),
+      ),
+    );
+  }
+}
+
+// dinamik liste için model sınıf
+class Ders {
+  String ad;
+  double harfDegeri;
+  int kredi;
+
+  Ders(this.ad, this.harfDegeri, this.kredi);
 }
