@@ -28,7 +28,9 @@ class _MyHomePageState extends State<MyHomePage> {
   String dersAdi;
   int dersKredi = 1;
   double dersHarfDegeri = 4;
+  double ortalama=0;
   List<Ders> tumDersler;
+
   var formKey = GlobalKey<FormState>();
   @override
   void initState() {
@@ -64,7 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // STATİC FORMU TUTAN CONTAİNER
           Container(
             padding: EdgeInsets.all(12),
-            color: Colors.pink.shade300,
+            //color: Colors.pink.shade300,
             child: Form(
               key: formKey,
               child: buildFormColumn(),
@@ -72,9 +74,8 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           // DİNAMİK LİSTEYİ TUTAN CONTAİNER
           Expanded(
-            
             child: Container(
-              color: Colors.blue.shade300,
+              color: Colors.blue.shade200,
               child: buildList(),
             ),
           )
@@ -105,7 +106,6 @@ class _MyHomePageState extends State<MyHomePage> {
             setState(() {
               tumDersler.add(Ders(dersAdi, dersHarfDegeri, dersKredi));
             });
-            
           },
         ),
         Row(
@@ -117,7 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
               child: buildDropDownButton(),
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: Colors.black,
+                  color: Colors.pink.shade300,
                   width: 2,
                 ),
                 borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -129,7 +129,7 @@ class _MyHomePageState extends State<MyHomePage> {
               child: buildDropDownButton2(),
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: Colors.black,
+                  color: Colors.pink.shade300,
                   width: 2,
                 ),
                 borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -137,13 +137,14 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ],
         ),
-        Divider(
-          // çizgi
-          color: Colors.blue,
-          height: 40,
-          indent: 2,
-        ),
+      Container(
+        margin: EdgeInsets.symmetric(vertical: 10),
+          height: 70,
+          color: Colors.pink.shade200,
+          child: Center(child: Text("ortalama: $ortalama")),
+        )
       ],
+        
     );
   }
 
@@ -266,7 +267,9 @@ class _MyHomePageState extends State<MyHomePage> {
     return Card(
       child: ListTile(
         title: Text(tumDersler[index].ad),
-        subtitle: Text(tumDersler[index].kredi.toString()+"kredi ders degeri"+tumDersler[index].harfDegeri.toString()),
+        subtitle: Text(tumDersler[index].kredi.toString() +
+            "kredi ders degeri" +
+            tumDersler[index].harfDegeri.toString()),
       ),
     );
   }
